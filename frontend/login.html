@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | BakulGaming</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <!-- Import Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="games.html">Games</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="user-dashboard.html">Dashboard</a></li>
+            </ul>
+            <a href="login.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <img src="assets/pp.png" alt="User Profile" class="user-profile">
+                <span class="user-name"></span>
+            </a>
+            <!-- Hamburger Menu Icon -->
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Content -->
+    <main class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+            </div>
+            <h2>Selamat Datang Kembali!</h2>
+            <p>Silakan masuk untuk melanjutkan.</p>
+
+            <form id="mainLoginForm">
+                <div class="form-group">
+                    <label for="email">Email atau Username</label>
+                    <input type="text" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" name="password" required>
+                        <button type="button" id="togglePasswordBtn" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+
+            <div class="login-extra-links">
+                Belum punya akun? <a href="#">Daftar di sini</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer-simple">
+        <div class="footer-content-simple">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </div>
+            <ul class="footer-simple-links">
+                <li><a href="about.html">Hubungi Kami</a></li>
+                <li><a href="#">FAQs</a></li>
+                <li><a href="#">Support</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

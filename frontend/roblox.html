@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BakulGaming | Roblox Top Up</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <!-- Import Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="games.html" style="color: var(--primary-purple); font-weight: 600;">Games</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <a href="javascript:void(0)" onclick="openLoginModal()" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <img src="assets/pp.png" alt="User Profile" class="user-profile">
+                <span class="user-name"></span>
+            </a>
+            <!-- Hamburger Menu Icon -->
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Roblox Top Up Content -->
+    <main class="games-container">
+        
+        <!-- Header -->
+        <header class="games-header">
+            <h1>
+                <span class="underline-blue">Roblox</span>
+            </h1>
+            <p class="sub-headline">
+                Top up Robux dengan cepat, aman, dan harga terbaik di sini. Proses instan, langsung masuk ke akun Anda.
+            </p>
+        </header>
+
+        <!-- How to Order Section -->
+        <section class="how-to-order-section">
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-badge">01</div>
+                    <h3>Pilih Nominal</h3>
+                    <p>Pilih jumlah Robux yang kamu inginkan atau masukkan nominal kustom.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-badge">02</div>
+                    <h3>Masukkan ID</h3>
+                    <p>Masukkan Username atau ID Roblox kamu dengan benar pada kolom yang tersedia.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-badge">03</div>
+                    <h3>Selesaikan Pembayaran</h3>
+                    <p>Pilih metode pembayaran dan selesaikan transaksi. Robux akan masuk otomatis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistik Row -->
+        <section class="roblox-stats-container">
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <!-- Heroicon: cube -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
+                </div>
+                <div class="stat-card-content">
+                    <h4>Stok</h4>
+                    <p>Tersedia</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <!-- Heroicon: shopping-cart -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.344 1.087-.835l1.823-6.84a1.125 1.125 0 00-.9-1.43H5.165M7.5 14.25L5.106 5.165m0 0a1.125 1.125 0 01-1.125-1.125H3.375" /></svg>
+                </div>
+                <div class="stat-card-content">
+                    <h4>Terjual</h4>
+                    <p>12.5K+</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <!-- Heroicon: clipboard-document-list -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" /></svg>
+                </div>
+                <div class="stat-card-content">
+                    <h4>Pesanan</h4>
+                    <p>24/7 Instan</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <!-- Heroicon: receipt-percent -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-1.5h5.25m-5.25 0h5.25m-5.25 0h5.25m-5.25 0h5.25M3 4.5h15a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25H3a2.25 2.25 0 01-2.25-2.25V6.75A2.25 2.25 0 013 4.5z" /></svg>
+                </div>
+                <div class="stat-card-content">
+                    <h4>Harga</h4>
+                    <p id="roblox-rate-stat">Rp 140 / R$</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Paket Grid -->
+        <section class="roblox-package-grid">
+            <div class="roblox-package-card">
+                <h4>50 Robux</h4>
+                <p>Rp 7.000</p>
+            </div>
+            <div class="roblox-package-card popular">
+                <span class="roblox-package-badge">Populer</span>
+                <h4>100 Robux</h4>
+                <p>Rp 14.000</p>
+            </div>
+            <div class="roblox-package-card">
+                <h4>200 Robux</h4>
+                <p>Rp 28.000</p>
+            </div>
+            <div class="roblox-package-card">
+                <h4>500 Robux</h4>
+                <p>Rp 70.000</p>
+            </div>
+            <div class="roblox-package-card">
+                <h4>800 Robux</h4>
+                <p>Rp 112.000</p>
+            </div>
+            <div class="roblox-package-card">
+                <h4>1,000 Robux</h4>
+                <p>Rp 140.000</p>
+            </div>
+        </section>
+
+        <!-- Custom Amount Section -->
+        <section class="custom-amount-section">
+            <h3>Atau Masukkan Jumlah Sendiri</h3>
+            <div class="calculator-wrapper">
+                <div class="calculator-input-group">
+                    <label for="robux-input">Jumlah Robux</label>
+                    <input type="number" id="robux-input" placeholder="min. 50">
+                </div>
+                <div class="calculator-output-group">
+                    <label for="price-input">Total Harga (Rp)</label>
+                    <input type="number" id="price-input" placeholder="min. 7000">
+                </div>
+            </div>
+        </section>
+
+        <!-- Transaction Detail Section (Hidden by default) -->
+        <section id="transaction-section" class="transaction-section">
+            <div class="transaction-card">
+                <h3>Selesaikan Pembayaran</h3>
+                
+                <!-- 1. Totalnya -->
+                <div class="transaction-detail-row">
+                    <label>Total Pembayaran</label>
+                    <div class="final-price" id="final-price-display">Rp 0</div>
+                </div>
+
+                <!-- 2. Masukkan Username -->
+                <div class="form-group">
+                    <label for="roblox-username">Username Roblox</label>
+                    <input type="text" id="roblox-username" placeholder="Masukkan Username Roblox Kamu">
+                    <!-- Container Avatar & Validasi -->
+                    <div id="roblox-user-info" class="roblox-user-info" style="display: none;">
+                        <img id="roblox-avatar" src="" alt="Avatar" class="roblox-avatar">
+                        <span id="roblox-valid-name" class="roblox-valid-name"></span>
+                    </div>
+                    <small id="roblox-status-msg" class="roblox-status-msg"></small>
+                </div>
+
+                <!-- 3. Pilih Metode Pembayaran (Grid) -->
+                <div class="form-group">
+                    <label>Pilih Metode Pembayaran</label>
+                    <div class="payment-accordion">
+                        <!-- Kategori 1: E-Wallet / QRIS -->
+                        <div class="accordion-item active">
+                            <div class="accordion-header">
+                                <span>E-Wallet & QRIS</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="payment-grid">
+                                    <div class="payment-option">DANA</div>
+                                    <div class="payment-option">GOPAY</div>
+                                    <div class="payment-option">OVO</div>
+                                    <div class="payment-option">QRIS</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kategori 2: Virtual Account -->
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span>Virtual Account (Bank)</span>
+                                <span class="arrow">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="payment-grid">
+                                    <div class="payment-option">BCA</div>
+                                    <div class="payment-option">MANDIRI</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Kode Kupon -->
+                <div class="form-group">
+                    <label>Kode Kupon (Opsional)</label>
+                    <div class="coupon-group">
+                        <input type="text" id="coupon-input" placeholder="Masukkan Kode Promo">
+                        <button class="btn-secondary" id="btn-apply-coupon">Pakai</button>
+                    </div>
+                </div>
+
+                <button id="btn-pay-now" class="btn-primary" style="width: 100%; margin-top: 1rem;">Bayar Sekarang</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer-simple">
+        <div class="footer-content-simple">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </div>
+            <ul class="footer-simple-links">
+                <li><a href="about.html">Hubungi Kami</a></li>
+                <li><a href="#">FAQs</a></li>
+                <li><a href="#">Support</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Gamepass Modal -->
+    <div class="modal-overlay" id="gamepassModal">
+        <div class="modal-content gamepass-modal-content">
+            <span class="close-modal-icon" onclick="closeGamepassModal()">&times;</span>
+            <h3>Buat Gamepass sebesar <span id="gp-amount" style="color: var(--primary-purple);">0</span> R$</h3>
+            <div class="video-container">
+                <!-- Placeholder Video Tutorial -->
+                <iframe width="100%" src="https://www.youtube.com/embed/Dk2s7tZ-4kY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="btn-atur-gp">Atur Gamepass</button>
+                <button class="btn-primary" id="btn-check-gp">Sudah Mengatur Gamepass</button>
+            </div>
+            <div id="gp-loading" style="display:none; margin-top:15px; color: var(--text-gray);">Sedang memeriksa...</div>
+            <div id="gp-error" style="color: red; margin-top:10px; display:none; font-size: 0.9rem; font-weight: 500;"></div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content login-modal-content">
+            <span class="close-modal-icon" onclick="closeLoginModal()">&times;</span>
+            <div class="login-modal-header">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px; margin-bottom: 10px;">
+                <h3>Login</h3>
+                <p style="font-size: 0.9rem; color: var(--text-gray);">Masuk untuk melanjutkan</p>
+            </div>
+            <form id="mainLoginForm">
+                <div class="form-group">
+                    <label for="login-email">Email / Username</label>
+                    <input type="text" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" required>
+                        <button type="button" id="togglePasswordBtn" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Masuk</button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+                Belum punya akun? <a href="register.html" style="color: var(--primary-purple); font-weight: 600;">Daftar Sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const robuxInput = document.getElementById('robux-input');
+            const priceInput = document.getElementById('price-input');
+            const transactionSection = document.getElementById('transaction-section');
+            const finalPriceDisplay = document.getElementById('final-price-display');
+            const usernameInput = document.getElementById('roblox-username');            
+            let currentUserId = null; // Menyimpan User ID setelah verifikasi
+            let isUpdating = false; // Flag untuk mencegah loop tak terbatas
+
+            const savedRate = localStorage.getItem('roblox_rate');
+            const basePrice = savedRate ? parseInt(savedRate) : 140; // Default 140
+
+            const formatter = new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Update stat harga
+            document.getElementById('roblox-rate-stat').textContent = `Rp ${basePrice} / R$`;
+
+            function updateFromRobux(amount) {
+                if (isUpdating) return;
+                isUpdating = true;
+
+                const robux = parseInt(amount, 10) || 0;
+                const totalPrice = robux * basePrice;
+                
+                robuxInput.value = robux;
+                priceInput.value = totalPrice;
+
+                if (robux >= 50) {
+                    transactionSection.style.display = 'block';
+                    finalPriceDisplay.textContent = formatter.format(totalPrice);
+                } else {
+                    transactionSection.style.display = 'none';
+                }
+
+                isUpdating = false;
+            }
+
+            // Listener untuk input Robux
+            robuxInput.addEventListener('input', () => {
+                updateFromRobux(robuxInput.value);
+            });
+
+            // Listener untuk input Harga
+            priceInput.addEventListener('input', () => {
+                if (isUpdating) return;
+                isUpdating = true;
+                
+                const price = parseInt(priceInput.value, 10) || 0;
+                const robuxAmount = Math.floor(price / basePrice);
+                robuxInput.value = robuxAmount;
+
+                if (robuxAmount >= 50) {
+                    transactionSection.style.display = 'block';
+                    finalPriceDisplay.textContent = formatter.format(price);
+                } else {
+                    transactionSection.style.display = 'none';
+                }
+                
+                isUpdating = false;
+            });
+
+            // --- FUNGSI SIMULASI TRANSAKSI (Untuk Testing) ---
+            function simulateTransaction(robuxAmount, totalPrice) {
+                const activeUserStr = localStorage.getItem('activeUser');
+                // Fallback user jika testing tanpa login
+                const user = activeUserStr ? JSON.parse(activeUserStr) : { name: 'Guest', email: 'guest@example.com' };
+                const gameUsername = document.getElementById('roblox-username').value;
+
+                // Prompt pilihan skenario
+                const scenario = prompt(
+                    "--- SIMULASI PEMBAYARAN (TESTING) ---\n" +
+                    "Pilih hasil transaksi yang diinginkan:\n\n" +
+                    "1. SUKSES (Sudah Bayar & Masuk)\n" +
+                    "2. PENDING (Sudah Bayar, Belum Masuk)\n" +
+                    "3. GAGAL (Belum Bayar / Cancel)\n\n" +
+                    "Ketik angka 1, 2, atau 3:"
+                );
+
+                if (!scenario) return; // Batal
+
+                let status = '';
+                if (scenario === '1') status = 'Sukses';
+                else if (scenario === '2') status = 'Pending';
+                else if (scenario === '3') status = 'Gagal';
+                else { alert('Pilihan tidak valid'); return; }
+
+                // Buat Data Transaksi
+                const newTrx = {
+                    id: generateNextTransactionId(), // Panggil fungsi global
+                    user_name: user.name,
+                    user_email: user.email,
+                    game: 'Roblox',
+                    item: robuxAmount + ' Robux',
+                    price: parseInt(totalPrice),
+                    status: status,
+                    date: new Date().toLocaleString('id-ID'),
+                    username_game: gameUsername
+                };
+
+                // Simpan ke LocalStorage
+                const transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
+                transactions.unshift(newTrx);
+                localStorage.setItem('all_transactions', JSON.stringify(transactions));
+
+                alert(`Simulasi Selesai! Status: ${status}`);
+                window.location.href = 'user-dashboard.html';
+            }
+
+            const packageCards = document.querySelectorAll('.roblox-package-card');
+            packageCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const robuxText = card.querySelector('h4').textContent;
+                    const robuxAmount = parseInt(robuxText.replace(/[^0-9]/g, ''), 10);
+                    
+                    if (!isNaN(robuxAmount)) {
+                        updateFromRobux(robuxAmount); // Panggil fungsi terpusat
+                        
+                        // Scroll ke bagian transaksi
+                        setTimeout(() => {
+                            transactionSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
+                    }
+                });
+            });
+
+            // Logika Pilihan Metode Pembayaran
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                });
+            });
+
+            // Logika Accordion (Buka/Tutup Kategori)
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const item = header.parentElement;
+                    // Opsional: Tutup yang lain saat satu dibuka
+                    document.querySelectorAll('.accordion-item').forEach(i => {
+                        if (i !== item) i.classList.remove('active');
+                    });
+                    item.classList.toggle('active');
+                });
+            });
+
+            // --- LOGIKA VERIFIKASI USERNAME (DEBOUNCE) ---
+            let timeoutId;
+            const userInfoContainer = document.getElementById('roblox-user-info');
+            const avatarImg = document.getElementById('roblox-avatar');
+            const validNameSpan = document.getElementById('roblox-valid-name');
+            const statusMsg = document.getElementById('roblox-status-msg');
+
+            usernameInput.addEventListener('input', (e) => {
+                const username = e.target.value.trim();
+
+                // Reset tampilan saat mengetik
+                userInfoContainer.style.display = 'none';
+                statusMsg.textContent = 'Mencari user...';
+                statusMsg.style.color = '#8F9BB3'; // Gray
+
+                // Clear timeout sebelumnya (Debounce logic)
+                clearTimeout(timeoutId);
+
+                if (username.length === 0) {
+                    statusMsg.textContent = '';
+                    return;
+                }
+
+                // Set timeout baru (tunggu 500ms setelah berhenti mengetik)
+                timeoutId = setTimeout(async () => {
+                    try {
+                        // Panggil API dengan alamat lengkap untuk development lokal
+                        const response = await fetch('http://localhost:3000/api/roblox/verify', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ username: username })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Sukses: Tampilkan Avatar dan Nama
+                            avatarImg.src = data.avatarUrl || 'assets/pp.png'; // Fallback ke avatar default jika null
+                            validNameSpan.textContent = data.username; // Selalu tampilkan username unik
+                            currentUserId = data.userId; // Simpan User ID
+                            userInfoContainer.style.display = 'flex';
+                            
+                            statusMsg.textContent = '✓ Username ditemukan';
+                            statusMsg.style.color = 'green';
+                        } else {
+                            // Gagal: User tidak ditemukan
+                            userInfoContainer.style.display = 'none';
+                            currentUserId = null;
+                            statusMsg.textContent = '✗ Username tidak ditemukan';
+                            statusMsg.style.color = 'red';
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user:', error);
+                        userInfoContainer.style.display = 'none';
+                        statusMsg.textContent = '⚠ Terjadi kesalahan koneksi';
+                        statusMsg.style.color = 'orange';
+                    }
+                }, 300); // Delay 300ms
+            });
+
+            // --- LOGIKA MODAL GAMEPASS ---
+            const btnPay = document.getElementById('btn-pay-now');
+            const gamepassModal = document.getElementById('gamepassModal');
+            const gpAmountSpan = document.getElementById('gp-amount');
+            const gpError = document.getElementById('gp-error');
+            const gpLoading = document.getElementById('gp-loading');
+
+            // Buka Modal
+            btnPay.addEventListener('click', () => {
+                if (!currentUserId) {
+                    alert('Mohon masukkan dan verifikasi username Roblox terlebih dahulu!');
+                    usernameInput.focus();
+                    return;
+                }
+                const amount = robuxInput.value;
+                if (!amount || amount < 50) {
+                    alert('Minimal pembelian adalah 50 Robux.');
+                    return;
+                }
+
+                gpAmountSpan.textContent = amount;
+                gpError.style.display = 'none';
+                gpLoading.style.display = 'none';
+                gamepassModal.classList.add('active');
+            });
+
+            // Tombol Atur Gamepass (Redirect ke Dashboard)
+            document.getElementById('btn-atur-gp').addEventListener('click', async () => {
+                try {
+                    const res = await fetch('http://localhost:3000/api/roblox/get-creation-link', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ userId: currentUserId })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        window.open(data.link, '_blank');
+                    } else {
+                        alert(data.message || 'Gagal mendapatkan link.');
+                    }
+                } catch (e) {
+                    alert('Terjadi kesalahan koneksi ke server.');
+                }
+            });
+
+            // Tombol Sudah Mengatur Gamepass (Verifikasi)
+            document.getElementById('btn-check-gp').addEventListener('click', async () => {
+                // BYPASS VERIFIKASI UNTUK TESTING
+                // Langsung tutup modal dan jalankan simulasi tanpa cek ke server
+                gamepassModal.classList.remove('active');
+                simulateTransaction(robuxInput.value, priceInput.value);
+            });
+
+            // Fungsi Tutup Modal Global
+            window.closeGamepassModal = () => {
+                gamepassModal.classList.remove('active');
+            };
+        });
+    </script>
+</body>
+</html>

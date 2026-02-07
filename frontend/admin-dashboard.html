@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | BakulGaming</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Proteksi Halaman: Cek apakah admin sudah login
+        if (!localStorage.getItem('admin_token')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+<body class="admin-body">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo" style="font-size: 1.3rem;">
+                <img src="assets/logo.png" alt="Logo" style="height: 35px;">
+                Bakul Admin
+            </div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active" data-target="dashboard">📊 Dashboard</a></li>
+            <li><a href="#" data-target="transaksi">📦 Transaksi</a></li>
+            <li><a href="#" data-target="produk">🎮 Produk Game</a></li>
+            <li><a href="#" data-target="pengaturan">⚙️ Pengaturan</a></li>
+            <li style="margin-top: 2rem;">
+                <a href="#" onclick="logoutAdmin()" style="color: #FF4D4D;">🚪 Logout</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h2 style="font-weight: 700; color: var(--text-dark);">Overview</h2>
+                <p style="color: var(--text-gray);">Selamat datang kembali, Admin!</p>
+            </div>
+            <div class="user-profile">
+                <img src="assets/pp.png" alt="Admin" style="width: 45px; height: 45px; border-radius: 50%;">
+            </div>
+        </header>
+
+        <!-- View: Dashboard (Default) -->
+        <div id="view-dashboard" class="admin-view">
+            <!-- Stats Cards -->
+            <section class="stats-grid">
+                <div class="stat-box">
+                    <p style="color: var(--text-gray); font-size: 0.9rem;">Total Pendapatan</p>
+                    <h3 style="font-size: 1.8rem; color: var(--primary-purple);">Rp 0</h3>
+                    <small style="color: var(--text-gray);">Belum ada data</small>
+                </div>
+                <div class="stat-box">
+                    <p style="color: var(--text-gray); font-size: 0.9rem;">Transaksi Sukses</p>
+                    <h3 style="font-size: 1.8rem; color: var(--text-dark);">0</h3>
+                    <small style="color: var(--text-gray);">Bulan ini</small>
+                </div>
+            </section>
+
+            <!-- Recent Transactions -->
+            <section class="data-table-container">
+                <h3 style="margin-bottom: 1.5rem;">Transaksi Terbaru</h3>
+                <table class="admin-table" id="recent-transactions-table">
+                    <thead>
+                        <tr>
+                            <th>ID Order</th>
+                            <th>User</th>
+                            <th>Game</th>
+                            <th>Item</th>
+                            <th>Harga</th>
+                            <th>Status</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-gray);">Belum ada transaksi terbaru.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- View: Transaksi -->
+        <div id="view-transaksi" class="admin-view" style="display: none;">
+            <section class="data-table-container">
+                <h3>Riwayat Transaksi Lengkap</h3>
+                <p style="color: var(--text-gray); margin-top: -10px; margin-bottom: 1.5rem;">Semua data transaksi yang pernah tercatat.</p>
+                <!-- Filter Controls -->
+                <div class="trx-filters-row" style="margin-bottom: 1.5rem; max-width: 600px;">
+                    <div class="filter-item">
+                        <label style="font-size: 0.8rem; font-weight: 600;">Jenis Game</label>
+                        <select id="admin-filter-game" class="filter-select-custom" style="padding: 10px 12px;">
+                            <option>Semua</option>
+                            <option>Roblox</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label style="font-size: 0.8rem; font-weight: 600;">Status Pesanan</label>
+                        <select id="admin-filter-status" class="filter-select-custom" style="padding: 10px 12px;">
+                            <option>Semua</option>
+                            <option>Sukses</option>
+                            <option>Pending</option>
+                            <option>Gagal</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="admin-table" id="full-transactions-table">
+                    <thead>
+                        <tr>
+                            <th>ID Order</th>
+                            <th>User</th>
+                            <th>Game</th>
+                            <th>Item</th>
+                            <th>Harga</th>
+                            <th>Status</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-gray);">Belum ada transaksi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- View: Produk Game -->
+        <div id="view-produk" class="admin-view" style="display: none;">
+            <section class="data-table-container">
+                <h3>Manajemen Produk Game</h3>
+                <div class="games-management-grid">
+                    <!-- Roblox Card -->
+                    <div class="game-management-card">
+                        <img src="assets/robloxbanner.png" class="game-management-img">
+                        <h4>Roblox</h4>
+                        <div class="form-group-profile" style="margin-top: 1rem;">
+                            <label>Rate Harga per 1 Robux (Rp)</label>
+                            <input type="number" id="roblox-rate-input" placeholder="Contoh: 140">
+                        </div>
+                        <button class="btn-save-profile" onclick="saveRobloxRate()">Simpan</button>
+                    </div>
+                    <!-- ML Card -->
+                    <div class="game-management-card disabled">
+                        <img src="assets/mlbanner.png" class="game-management-img">
+                        <h4>Mobile Legends</h4>
+                        <p class="coming-soon-text">Segera Hadir</p>
+                    </div>
+                    <!-- FF Card -->
+                    <div class="game-management-card disabled">
+                        <img src="assets/freefire.png" class="game-management-img">
+                        <h4>Free Fire</h4>
+                        <p class="coming-soon-text">Segera Hadir</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- View: Pengaturan -->
+        <div id="view-pengaturan" class="admin-view" style="display: none;">
+            <section class="data-table-container">
+                <h3>Pengaturan</h3>
+                <!-- Area Tester: Reset Data -->
+                <div style="margin-top: 1rem;">
+                    <h4 style="color: #FF4D4D; margin-bottom: 1rem;">Zona Bahaya (Tester)</h4>
+                    <button onclick="resetAllData()" style="background: #FF4D4D; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        🗑️ Hapus Semua Data Transaksi
+                    </button>
+                    <p style="color: var(--text-gray); font-size: 0.85rem; margin-top: 0.5rem;">
+                        Gunakan tombol ini untuk mereset database lokal saat testing selesai.
+                    </p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function logoutAdmin() {
+            localStorage.removeItem('admin_token');
+            window.location.href = 'index.html';
+        }
+
+        function resetAllData() {
+            if(confirm('Yakin ingin menghapus semua data transaksi? Data tidak bisa dikembalikan.')) {
+                localStorage.removeItem('all_transactions');
+                localStorage.removeItem('roblox_rate'); // Hapus juga rate roblox
+                alert('Semua data transaksi berhasil dihapus!');
+                loadAdminData(); // Refresh tabel
+            }
+        }
+
+        function saveRobloxRate() {
+            const rate = document.getElementById('roblox-rate-input').value;
+            if (rate && !isNaN(rate) && rate > 0) {
+                localStorage.setItem('roblox_rate', rate);
+                alert('Rate Roblox berhasil disimpan: Rp ' + rate);
+            } else {
+                alert('Mohon masukkan angka yang valid dan lebih besar dari 0.');
+            }
+        }
+
+        function changeStatus(id) {
+            let transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
+            const trxIndex = transactions.findIndex(t => t.id === id);
+            
+            if (trxIndex !== -1) {
+                const currentStatus = transactions[trxIndex].status;
+                // Rotasi Status: Pending -> Sukses -> Gagal -> Pending
+                let newStatus = currentStatus === 'Pending' ? 'Sukses' : (currentStatus === 'Sukses' ? 'Gagal' : 'Pending');
+                
+                transactions[trxIndex].status = newStatus;
+                localStorage.setItem('all_transactions', JSON.stringify(transactions));
+                loadAdminData(); // Refresh tabel untuk melihat perubahan warna
+            }
+        }
+
+        // Logika interaktif untuk menu sidebar (Pilihan Menu)
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuLinks = document.querySelectorAll('.sidebar-menu li a[data-target]');
+            const views = document.querySelectorAll('.admin-view');
+            const headerTitle = document.querySelector('.admin-header h2');
+
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+
+                    // Hapus class active dari semua menu
+                    menuLinks.forEach(item => item.classList.remove('active'));
+                    // Tambahkan class active ke menu yang diklik
+                    link.classList.add('active');
+                    
+                    // Sembunyikan semua view
+                    views.forEach(view => view.style.display = 'none');
+                    
+                    // Tampilkan view yang sesuai target
+                    const targetView = document.getElementById('view-' + targetId);
+                    if (targetView) {
+                        targetView.style.display = 'block';
+                    }
+
+                    // Ubah judul header sesuai menu yang dipilih (menghapus emoji di depan)
+                    if (headerTitle) {
+                        const textParts = link.textContent.trim().split(' ');
+                        // Ambil teks setelah spasi pertama (asumsi kata pertama adalah emoji)
+                        headerTitle.textContent = textParts.length > 1 ? textParts.slice(1).join(' ') : textParts[0];
+                    }
+                });
+            });
+
+            // Load Data Transaksi Realtime (Simulasi)
+            loadAdminData();
+
+            // --- AUTO REFRESH (REAL-TIME) ---
+            // Mendeteksi jika ada transaksi baru dari tab User
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'all_transactions') {
+                    loadAdminData();
+                }
+            });
+
+            // --- Fungsikan Filter ---
+            document.getElementById('admin-filter-game').addEventListener('change', loadAdminData);
+            document.getElementById('admin-filter-status').addEventListener('change', loadAdminData);
+
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'all_transactions') {
+                    loadAdminData();
+                }
+            });
+        });
+
+        function createTransactionRow(trx) {
+            let statusClass = 'status-success';
+            if (trx.status === 'Pending') statusClass = 'status-pending';
+            if (trx.status === 'Gagal') statusClass = 'status-failed';
+
+            return `
+                <tr>
+                    <td>${trx.id}</td>
+                    <td>${trx.user_name}<br><small style="color:#888">${trx.user_email}</small></td>
+                    <td>${trx.game}</td>
+                    <td>${trx.item}</td>
+                    <td>Rp ${trx.price.toLocaleString('id-ID')}</td>
+                    <td><span class="status-badge ${statusClass}" onclick="changeStatus('${trx.id}')" style="cursor:pointer; user-select:none;" title="Klik untuk ubah status">${trx.status}</span></td>
+                    <td>${trx.date}</td>
+                </tr>
+            `;
+        }
+
+        function loadAdminData() {
+            let transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
+            const recentTbody = document.querySelector('#recent-transactions-table tbody');
+            const fullTbody = document.querySelector('#full-transactions-table tbody');
+            
+            // Elemen Statistik
+            const totalRevenueEl = document.querySelectorAll('.stat-box h3')[0];
+            const totalSuccessEl = document.querySelectorAll('.stat-box h3')[1];
+
+            let totalRevenue = 0;
+            let successCount = 0;
+
+            // Hitung statistik dari semua transaksi (sebelum difilter)
+            transactions.forEach(trx => {
+                if (trx.status === 'Sukses') {
+                    totalRevenue += trx.price;
+                    successCount++;
+                }
+            });
+            totalRevenueEl.textContent = 'Rp ' + totalRevenue.toLocaleString('id-ID');
+            totalSuccessEl.textContent = successCount;
+
+            // Ambil nilai filter
+            const gameFilter = document.getElementById('admin-filter-game').value;
+            const statusFilter = document.getElementById('admin-filter-status').value;
+
+            // Terapkan filter untuk tabel riwayat lengkap
+            let filteredTransactions = transactions.filter(trx => {
+                if (gameFilter !== 'Semua' && trx.game !== gameFilter) return false;
+                if (statusFilter !== 'Semua' && trx.status !== statusFilter) return false;
+                return true;
+            });
+
+            if (filteredTransactions.length > 0) {
+                // Populate recent transactions (top 5)
+                const recentTransactions = filteredTransactions.slice(0, 5);
+                recentTbody.innerHTML = recentTransactions.map(createTransactionRow).join('');
+
+                // Populate full transaction history
+                fullTbody.innerHTML = filteredTransactions.map(createTransactionRow).join('');
+            } else {
+                // Handle empty state for both tables
+                recentTbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-gray);">Belum ada transaksi terbaru.</td></tr>';
+                fullTbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-gray);">Belum ada transaksi.</td></tr>';
+            }
+        }
+    </script>
+    <script>
+        // Load saved roblox rate on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedRate = localStorage.getItem('roblox_rate');
+            if (savedRate) document.getElementById('roblox-rate-input').value = savedRate;
+        });
+    </script>
+</body>
+</html>

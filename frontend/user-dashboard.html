@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard User | BakulGaming</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Cek sesi login user
+        const activeUser = localStorage.getItem('activeUser');
+        if (!activeUser) {
+            window.location.href = 'index.html'; // Redirect ke home/login jika belum login
+        }
+    </script>
+</head>
+<body class="user-dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="games.html">Games</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <a href="javascript:void(0)" class="user-profile-link" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <img src="assets/pp.png" alt="User Profile" class="user-profile">
+                <span class="user-name"></span>
+            </a>
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="user-sidebar">
+            <div class="sidebar-brand">
+                <img src="assets/logo.png" alt="Logo" style="height: 35px;">
+                <span>Dashboard</span>
+            </div>
+            <nav class="user-nav">
+                <a href="#" class="nav-link active" onclick="switchTab(event, 'account')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Informasi Akun
+                </a>
+                <a href="#" class="nav-link" onclick="switchTab(event, 'transactions')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Riwayat Transaksi
+                </a>
+                <div class="divider"></div>
+                <a href="#" class="logout-link" onclick="logout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Keluar
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="user-main-content">
+            <!-- View: Informasi Akun -->
+            <div id="view-account" class="dashboard-view">
+            <div class="user-header">
+                <h2>Informasi Akun</h2>
+                <p>Kelola informasi profil dan akun game kamu</p>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="dashboard-card profile-card">
+                <div class="profile-header-section">
+                    <div class="profile-info-group">
+                        <img src="assets/pp.png" alt="Profile" class="profile-avatar-large user-profile">
+                        <div>
+                            <h3 class="user-name-display" style="font-size: 1.5rem; margin-bottom: 5px;">Guest User</h3>
+                            <span class="user-badge">Total Pembelian Rp0</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn-edit-profile" onclick="switchTab(event, 'edit-profile')">Edit Profile</a>
+                </div>
+                <div class="profile-details-row">
+                    <div class="detail-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span class="user-username-display">@guest123</span>
+                    </div>
+                    <div class="vertical-divider"></div>
+                    <div class="detail-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        <span>+62 812-xxxx-xxxx</span>
+                    </div>
+                    <div class="vertical-divider"></div>
+                    <div class="detail-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span class="user-email-display">guest@example.com</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roblox Input Card -->
+            <div class="dashboard-card roblox-card">
+                <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Akun Roblox</h3>
+                <div class="roblox-input-wrapper">
+                    <input type="text" id="roblox-username-input" placeholder="Masukkan Username Roblox">
+                    <button class="btn-save-roblox" onclick="saveRobloxUsername()">Simpan</button>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="dashboard-card stats-section">
+                <div class="stats-header">
+                    <h3>Pesanan Saya</h3>
+                    <a href="#" class="link-history" onclick="switchTab(event, 'transactions')">Riwayat Transaksi ></a>
+                </div>
+                <div class="stats-grid-horizontal">
+                    <div class="stat-item-v3">
+                        <span class="stat-number-big">0</span>
+                        <span class="stat-label-small">Belum Bayar</span>
+                    </div>
+                    <div class="stat-item-v3">
+                        <span class="stat-number-big">0</span>
+                        <span class="stat-label-small">Diproses</span>
+                    </div>
+                    <div class="stat-item-v3">
+                        <span class="stat-number-big">0</span>
+                        <span class="stat-label-small">Berhasil</span>
+                    </div>
+                    <div class="stat-item-v3">
+                        <span class="stat-number-big">0</span>
+                        <span class="stat-label-small">Gagal</span>
+                    </div>
+                    <div class="stat-item-v3">
+                        <span class="stat-number-big">0</span>
+                        <span class="stat-label-small">Salah Harga</span>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- View: Riwayat Transaksi (Awalnya Disembunyikan) -->
+            <div id="view-transactions" class="dashboard-view" style="display: none;">
+                <div class="user-header">
+                    <h2>Riwayat Transaksi</h2>
+                    <p>Informasi data riwayat transaksi yang telah dilakukan</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="trx-filters-container">
+                        <div class="trx-filters-row">
+                            <div class="filter-item">
+                                <label>Jenis Pesanan</label>
+                                <select id="filter-game" class="filter-select-custom">
+                                    <option>Semua</option>
+                                    <option>Roblox</option>
+                                    <!-- Opsi lain bisa ditambahkan di sini -->
+                                </select>
+                            </div>
+                            <div class="filter-item">
+                                <label>Status Pesanan</label>
+                                <select id="filter-status" class="filter-select-custom">
+                                    <option>Semua</option>
+                                    <option>Sukses</option>
+                                    <option>Pending</option>
+                                    <option>Gagal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="search-box-wide">
+                            <input type="text" id="search-input" placeholder="Cari berdasarkan ID pesanan atau username roblox...">
+                        </div>
+                    </div>
+
+                    <div class="transaction-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Nomor Pesanan</th>
+                                    <th>Username Roblox</th>
+                                    <th>Pesanan</th>
+                                    <th>Pembayaran</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-gray);">Belum ada riwayat transaksi.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination-container">
+                        <span class="page-info">Menampilkan 0 data</span>
+                        <div class="pagination-nav">
+                            <button class="page-btn"><</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Edit Profile -->
+            <div id="view-edit-profile" class="dashboard-view" style="display: none;">
+                <div class="user-header">
+                    <h2>Edit Profile</h2>
+                    <p>Perbarui informasi akun Anda</p>
+                </div>
+
+                <!-- Header Profile Summary -->
+                <div class="dashboard-card" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div style="position: relative;">
+                        <img src="assets/pp.png" alt="Profile" class="profile-avatar-large user-profile" id="edit-profile-preview">
+                        <label for="profile-upload" style="position: absolute; bottom: 0; right: 0; background: var(--primary-purple); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);" title="Ganti Foto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        </label>
+                        <input type="file" id="profile-upload" accept="image/*" style="display: none;" onchange="previewProfileImage(this)">
+                    </div>
+                    <div>
+                        <h3 class="user-name-display" style="font-size: 1.5rem; margin-bottom: 5px;">Guest User</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-gray);">Klik ikon kamera untuk mengganti foto.</p>
+                    </div>
+                </div>
+
+                <div class="edit-profile-tabs">
+                    <button class="tab-btn active" onclick="switchEditSubTab(this, 'profile-form')">Edit Profile</button>
+                    <button class="tab-btn" onclick="switchEditSubTab(this, 'password-form')">Password</button>
+                </div>
+
+                <!-- Tab 1: Edit Profile Form -->
+                <div id="profile-form" class="dashboard-card edit-sub-view">
+                    <h3 class="card-title-profile">Infomasi Profile</h3>
+                    
+                    <form class="profile-form">
+                        <div class="form-row-grid">
+                            <div class="form-group-profile">
+                                <label>Email</label>
+                                <input type="email" id="edit-email-input" placeholder="Email">
+                            </div>
+                            <div class="form-group-profile">
+                                <label>Nomor Handphone</label>
+                                <input type="tel" placeholder="Nomor Handphone">
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-save-profile" onclick="saveProfileChanges()">Simpan Perubahan</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab 2: Change Password Form -->
+                <div id="password-form" class="dashboard-card edit-sub-view" style="display: none;">
+                    <h3 class="card-title-profile">Ganti Password</h3>
+                    
+                    <form class="profile-form">
+                        <div class="form-group-profile" style="margin-bottom: 1.5rem;">
+                            <label>Password Lama</label>
+                            <input type="password" placeholder="Masukkan password lama">
+                        </div>
+                        <div class="form-group-profile" style="margin-bottom: 1.5rem;">
+                            <label>Password Baru</label>
+                            <input type="password" placeholder="Masukkan password baru">
+                        </div>
+                        <div class="form-group-profile" style="margin-bottom: 1.5rem;">
+                            <label>Konfirmasi Password</label>
+                            <input type="password" placeholder="Konfirmasi password baru">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-save-profile">Simpan Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeUserStr = localStorage.getItem('activeUser');
+            if (activeUserStr) {
+                const activeUser = JSON.parse(activeUserStr);
+                if (activeUser.name) {
+                    document.querySelectorAll('.user-name-display').forEach(el => {
+                        el.textContent = activeUser.name;
+                    });
+                    document.querySelector('.user-username-display').textContent = '@' + activeUser.name.toLowerCase().replace(/\s/g, '');
+                }
+                if (activeUser.email) {
+                    document.querySelector('.user-email-display').textContent = activeUser.email;
+                    // Auto-fill email di form edit profile
+                    const editEmailInput = document.getElementById('edit-email-input');
+                    if (editEmailInput) editEmailInput.value = activeUser.email;
+                }
+                // Load Roblox Username jika ada
+                if (activeUser.robloxUsername) {
+                    document.getElementById('roblox-username-input').value = activeUser.robloxUsername;
+                } else {
+                    // Pastikan input kosong untuk user baru
+                    document.getElementById('roblox-username-input').value = '';
+                }
+
+                // Load Riwayat Transaksi
+                loadUserTransactions(activeUser);
+
+                // --- Fungsikan Filter ---
+                const filterGame = document.getElementById('filter-game');
+                const filterStatus = document.getElementById('filter-status');
+                const searchInput = document.getElementById('search-input');
+
+                filterGame.addEventListener('change', () => loadUserTransactions(activeUser));
+                filterStatus.addEventListener('change', () => loadUserTransactions(activeUser));
+                searchInput.addEventListener('input', () => loadUserTransactions(activeUser));
+            }
+        });
+
+        function switchTab(event, viewId) {
+            if (event) event.preventDefault();
+            
+            // Update Sidebar Active State
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Cari link yang diklik atau link yang sesuai dengan viewId (untuk kasus link 'Lihat Semua')
+            if (event && event.currentTarget.classList.contains('nav-link')) {
+                event.currentTarget.classList.add('active');
+            } else {
+                // Jika dipanggil dari link lain (bukan sidebar), set sidebar active manual
+                const sidebarLink = document.querySelector(`.nav-link[onclick*="'${viewId}'"]`);
+                if (sidebarLink) sidebarLink.classList.add('active');
+            }
+
+            // Toggle View
+            document.querySelectorAll('.dashboard-view').forEach(view => {
+                view.style.display = 'none';
+            });
+            document.getElementById('view-' + viewId).style.display = 'block';
+        }
+
+        function switchEditSubTab(btn, contentId) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.edit-profile-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            btn.classList.add('active');
+
+            // Hide all sub-views and show selected
+            document.querySelectorAll('.edit-sub-view').forEach(view => view.style.display = 'none');
+            document.getElementById(contentId).style.display = 'block';
+        }
+
+        function saveRobloxUsername() {
+            const input = document.getElementById('roblox-username-input');
+            const newUsername = input.value.trim();
+            
+            if (!newUsername) {
+                alert('Mohon masukkan username Roblox!');
+                return;
+            }
+
+            const activeUserStr = localStorage.getItem('activeUser');
+            if (activeUserStr) {
+                const activeUser = JSON.parse(activeUserStr);
+                activeUser.robloxUsername = newUsername;
+                
+                // Simpan ke sesi aktif
+                localStorage.setItem('activeUser', JSON.stringify(activeUser));
+                
+                // Simpan ke data user permanen (agar tidak hilang saat logout/login lagi)
+                if (activeUser.email) {
+                    const userKey = 'user_' + activeUser.email;
+                    if (localStorage.getItem(userKey)) {
+                        const permUser = JSON.parse(localStorage.getItem(userKey));
+                        permUser.robloxUsername = newUsername;
+                        localStorage.setItem(userKey, JSON.stringify(permUser));
+                    }
+                }
+                alert('Username Roblox berhasil disimpan!');
+            }
+        }
+
+        function loadUserTransactions(user) {
+            const transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
+            
+            // Ambil nilai filter
+            const gameFilter = document.getElementById('filter-game').value;
+            const statusFilter = document.getElementById('filter-status').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+            // Filter transaksi
+            const userTrx = transactions.filter(trx => {
+                // 1. Harus milik user yang login
+                if (trx.user_email !== user.email) return false;
+
+                // 2. Filter by game
+                if (gameFilter !== 'Semua' && trx.game !== gameFilter) return false;
+
+                // 3. Filter by status
+                if (statusFilter !== 'Semua' && trx.status !== statusFilter) return false;
+
+                // 4. Filter by search term (ID atau username game)
+                if (searchTerm && 
+                    !trx.id.toLowerCase().includes(searchTerm) && 
+                    !trx.username_game.toLowerCase().includes(searchTerm)
+                ) return false;
+
+                return true; // Lolos semua filter
+            });
+            
+            const tbody = document.querySelector('.transaction-table tbody');
+            const totalBadge = document.querySelector('.user-badge');
+            const statsNumbers = document.querySelectorAll('.stat-number-big'); // 0: Belum Bayar, 1: Proses, 2: Berhasil
+
+            // Hitung Total Pembelian
+            let totalSpent = 0;
+            let successCount = 0;
+            let pendingCount = 0;
+            let failedCount = 0;
+
+            if (userTrx.length > 0) {
+                tbody.innerHTML = ''; // Kosongkan tabel default
+
+                userTrx.forEach(trx => {
+                    if (trx.status === 'Sukses') {
+                        totalSpent += trx.price;
+                        successCount++;
+                    } else if (trx.status === 'Pending') {
+                        pendingCount++;
+                    } else if (trx.status === 'Gagal') {
+                        failedCount++;
+                    }
+
+                    let statusClass = 'status-success';
+                    if (trx.status === 'Pending') statusClass = 'status-pending';
+                    if (trx.status === 'Gagal') statusClass = 'status-failed';
+
+                    const row = `
+                        <tr>
+                            <td>
+                                <span class="order-id">#${trx.id}</span>
+                                <span class="order-date">${trx.date}</span>
+                            </td>
+                            <td>${trx.username_game}</td>
+                            <td>
+                                <div class="game-info-cell">
+                                    <div class="game-details">
+                                        <span class="game-name">${trx.game}</span>
+                                        <span class="item-name">${trx.item}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="price-cell">Rp ${trx.price.toLocaleString('id-ID')}</td>
+                            <td><span class="status-badge ${statusClass}">${trx.status}</span></td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+
+                // Update UI Statistik
+                totalBadge.textContent = 'Total Pembelian Rp ' + totalSpent.toLocaleString('id-ID');
+                if(statsNumbers[1]) statsNumbers[1].textContent = pendingCount; // Diproses / Pending
+                if(statsNumbers[2]) statsNumbers[2].textContent = successCount; // Update stat 'Berhasil'
+                if(statsNumbers[3]) statsNumbers[3].textContent = failedCount; // Gagal
+                document.querySelector('.page-info').textContent = `Menampilkan ${userTrx.length} data`;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('activeUser');
+            window.location.href = 'index.html';
+        }
+
+        // --- Fitur Ganti Foto Profile ---
+        let tempProfileImage = null;
+
+        function previewProfileImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validasi tipe file (Pastikan gambar)
+                if (!file.type.startsWith('image/')) {
+                    alert('Mohon pilih file gambar yang valid (JPG, PNG, dll)!');
+                    return;
+                }
+
+                // Validasi ukuran (misal 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Ukuran file terlalu besar! Maksimal 2MB.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('edit-profile-preview').src = e.target.result;
+                    tempProfileImage = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfileChanges() {
+            const activeUserStr = localStorage.getItem('activeUser');
+            if (!activeUserStr) return;
+
+            let activeUser = JSON.parse(activeUserStr);
+            const originalEmail = activeUser.email;
+            let hasChanges = false;
+
+            // 1. Simpan Foto Profile
+            if (tempProfileImage) {
+                activeUser.avatar = tempProfileImage;
+                hasChanges = true;
+            }
+
+            // 2. Simpan Email
+            const newEmail = document.getElementById('edit-email-input').value;
+            if (newEmail && newEmail !== originalEmail) {
+                activeUser.email = newEmail;
+                hasChanges = true;
+            }
+
+            if (hasChanges) {
+                // Update Session
+                localStorage.setItem('activeUser', JSON.stringify(activeUser));
+                
+                // Update Permanent Storage (Handle key change if email changed)
+                if (newEmail !== originalEmail) {
+                    localStorage.removeItem('user_' + originalEmail);
+                }
+                localStorage.setItem('user_' + activeUser.email, JSON.stringify(activeUser));
+
+                alert('Profil berhasil diperbarui!');
+                
+                // Update UI langsung
+                document.querySelectorAll('.user-profile').forEach(img => {
+                    if (activeUser.avatar) img.src = activeUser.avatar;
+                });
+                document.querySelectorAll('.user-email-display').forEach(el => {
+                    el.textContent = activeUser.email;
+                });
+                
+                tempProfileImage = null; // Reset
+            } else {
+                alert('Tidak ada perubahan yang disimpan.');
+            }
+        }
+    </script>
+</body>
+</html>

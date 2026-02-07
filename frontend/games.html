@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BakulGaming | TopUp Games</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <!-- Import Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar (Identik dengan Index) -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="games.html" style="color: var(--primary-purple); font-weight: 600;">Games</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <a href="javascript:void(0)" onclick="openLoginModal()" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <img src="assets/pp.png" alt="User Profile" class="user-profile">
+                <span class="user-name"></span>
+            </a>
+            <!-- Hamburger Menu Icon -->
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Games Content -->
+    <main class="games-container">
+        
+        <!-- Header -->
+        <header class="games-header">
+            <span class="small-tag">Halo gamers,</span>
+            <h1>
+                <span class="underline-blue">Games</span>
+            </h1>
+            <p class="sub-headline">
+                We provide millions of ways to help players become real winners.
+            </p>
+        </header>
+
+        <!-- Controls: Search & Filter -->
+        <section class="games-controls">
+            <div class="search-box">
+                <input type="text" placeholder="Search game...">
+            </div>
+            <div class="filter-group">
+                <select class="filter-select">
+                    <option>Filter by</option>
+                    <option>Popular</option>
+                    <option>Newest</option>
+                </select>
+                <select class="filter-select">
+                    <option>Category by</option>
+                    <option>MOBA</option>
+                    <option>RPG</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Game Cards Grid -->
+        <section class="games-grid">
+            <!-- Card 1: Roblox -->
+            <div class="game-card">
+                <img src="assets/robloxbanner.png" alt="Roblox" class="game-card-img">
+                <div class="game-card-body">
+                    <h3>Roblox</h3>
+                    <p>Roblox Corporation</p>
+                    <a href="roblox.html" class="btn-primary">Top Up Now</a>
+                </div>
+            </div>
+
+            <!-- Card 2: Mobile Legends -->
+            <div class="game-card">
+                <img src="assets/mlbanner.png" alt="Mobile Legends" class="game-card-img">
+                <div class="game-card-body">
+                    <h3>Mobile Legends</h3>
+                    <p>Monton</p>
+                    <a href="javascript:void(0)" class="btn-primary" onclick="showComingSoon()">Top Up Now</a>
+                </div>
+            </div>
+
+            <!-- Card 3: Free Fire -->
+            <div class="game-card">
+                <img src="assets/freefire.png" alt="Free Fire" class="game-card-img" width="800" height="450">
+                <div class="game-card-body">
+                    <h3>Free Fire</h3>
+                    <p>Garena</p>
+                    <a href="javascript:void(0)" class="btn-primary" onclick="showComingSoon()">Top Up Now</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer-simple">
+        <div class="footer-content-simple">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </div>
+
+            <!-- Links -->
+            <ul class="footer-simple-links">
+                <li><a href="about.html">Hubungi Kami</a></li>
+                <li><a href="#">FAQs</a></li>
+                <li><a href="#">Support</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Coming Soon Modal -->
+    <div class="modal-overlay" id="comingSoonModal">
+        <div class="modal-content">
+            <span class="modal-icon">🚧</span>
+            <h3 class="modal-title">Ups, Sabar Dulu!</h3>
+            <p class="modal-text">
+                Halaman top-up untuk game ini sedang kami racik di dapur agar makin ngebut. 
+                Tunggu update selanjutnya ya, Gamers! 🎮
+            </p>
+            <button class="btn-close-modal" onclick="closeComingSoon()">Siap, Ditunggu!</button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content login-modal-content">
+            <span class="close-modal-icon" onclick="closeLoginModal()">&times;</span>
+            <div class="login-modal-header">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px; margin-bottom: 10px;">
+                <h3>Login</h3>
+                <p style="font-size: 0.9rem; color: var(--text-gray);">Masuk untuk melanjutkan</p>
+            </div>
+            <form id="mainLoginForm">
+                <div class="form-group">
+                    <label for="login-email">Email / Username</label>
+                    <input type="text" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" required>
+                        <button type="button" id="togglePasswordBtn" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Masuk</button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+                Belum punya akun? <a href="register.html" style="color: var(--primary-purple); font-weight: 600;">Daftar Sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

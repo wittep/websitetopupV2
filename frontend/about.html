@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Kami | BakulGaming</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <!-- Import Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="games.html">Games</a></li>
+                <li><a href="about.html" style="color: var(--primary-purple); font-weight: 600;">About</a></li>
+            </ul>
+            <a href="javascript:void(0)" onclick="openLoginModal()" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <img src="assets/pp.png" alt="User Profile" class="user-profile">
+                <span class="user-name"></span>
+            </a>
+            <!-- Hamburger Menu Icon -->
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Content -->
+    <main class="about-page-wrapper">
+        
+        <!-- Hero Section -->
+        <section class="about-hero">
+            <div class="about-hero-text">
+                <span class="small-tag">Kenalan yuk!</span>
+                <h1>Tentang <span class="text-highlight">BakulGaming</span></h1>
+                <p>
+                    Lebih dari sekadar toko top-up, kami hadir sebagai partner yang siap membuat pengalaman nge-game kamu jadi lebih berkualitas. 
+                    Karena Bakul Gaming dibuat oleh gamer, untuk gamer.
+                </p>
+            </div>
+            <div class="about-hero-visual">
+                 <!-- Animasi sederhana menggunakan emoji/font -->
+                 <div class="floating-shape shape-controller">🎮</div>
+                 <div class="floating-shape shape-diamond">💎</div>
+            </div>
+        </section>
+
+        <!-- Stats Counter -->
+        <section class="stats-counter-container">
+            <div class="counter-box">
+                <h3>10.000+</h3>
+                <p>Gamers Puas</p>
+            </div>
+            <div class="counter-box">
+                <h3>500.000+</h3>
+                <p>Transaksi Sukses</p>
+            </div>
+            <div class="counter-box">
+                <h3>99.9%</h3>
+                <p>Uptime Server</p>
+            </div>
+        </section>
+
+        <!-- Values / Why Us -->
+        <section class="values-section">
+            <div class="section-header">
+                <h2>Kenapa Harus Kami?</h2>
+                <p style="color: var(--text-gray);">Karena kami mengerti apa yang gamers butuhkan.</p>
+            </div>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">⚡</div>
+                    <h3>Instan & Otomatis</h3>
+                    <p>Sistem kami bekerja 24/7. Top up jam 3 pagi? Gas terus, langsung masuk!</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">🛡️</div>
+                    <h3>Legal & Aman</h3>
+                    <p>Sumber dana 100% legal. Anti-banned club. Akun kamu aset berharga.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">💸</div>
+                    <h3>Harga Teman</h3>
+                    <p>Harga bersaing dengan promo melimpah. Hemat pangkal kaya (di game).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Highlight -->
+        <section class="contact-highlight-section">
+            <div class="contact-box">
+                <h3>Butuh Bantuan?</h3>
+                <p>Tim support kami siap membantu jika ada kendala transaksi.</p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <strong>WhatsApp</strong>
+                        <span>+62 812-3456-7890</span>
+                    </div>
+                    <div class="contact-item">
+                        <strong>Email</strong>
+                        <span>support@bakulgaming.com</span>
+                    </div>
+                </div>
+                <div class="social-links" style="justify-content: center; margin-top: 1.5rem;">
+                    <a href="#" class="social-icon">📷</a>
+                    <a href="#" class="social-icon">▶️</a>
+                    <a href="#" class="social-icon">🎵</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer-simple">
+        <div class="footer-content-simple">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px;">
+                BakulGaming
+            </div>
+
+            <!-- Links -->
+            <ul class="footer-simple-links">
+                <li><a href="about.html">Tentang Kami</a></li>
+                <li><a href="#">Syarat & Ketentuan</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="about.html">Hubungi Kami</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content login-modal-content">
+            <span class="close-modal-icon" onclick="closeLoginModal()">&times;</span>
+            <div class="login-modal-header">
+                <img src="assets/logo.png" alt="Logo" style="height: 40px; margin-bottom: 10px;">
+                <h3>Login</h3>
+                <p style="font-size: 0.9rem; color: var(--text-gray);">Masuk untuk melanjutkan</p>
+            </div>
+            <form id="mainLoginForm">
+                <div class="form-group">
+                    <label for="login-email">Email / Username</label>
+                    <input type="text" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" required>
+                        <button type="button" id="togglePasswordBtn" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Masuk</button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+                Belum punya akun? <a href="register.html" style="color: var(--primary-purple); font-weight: 600;">Daftar Sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

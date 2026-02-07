@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun | BakulGaming</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="register-section">
+        <!-- Background Shapes -->
+        <div class="register-bg-shape shape-1"></div>
+        <div class="register-bg-shape shape-2"></div>
+
+        <!-- Register Card -->
+        <div class="register-card">
+            <div class="login-modal-header">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="assets/logo.png" alt="Logo" style="height: 50px; margin-bottom: 10px;">
+                </a>
+                <h2>Buat Akun Baru</h2>
+                <p style="color: var(--text-gray);">Bergabunglah dan nikmati kemudahan top-up!</p>
+            </div>
+
+            <form action="#">
+                <div class="form-group">
+                    <label for="reg-name">Nama Lengkap</label>
+                    <input type="text" id="reg-name" required placeholder="Contoh: Budi Gaming">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" required placeholder="email@kamu.com">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" required placeholder="Minimal 8 karakter">
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm">Konfirmasi Password</label>
+                    <input type="password" id="reg-confirm" required placeholder="Ulangi password">
+                </div>
+                
+                <div class="form-group" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="checkbox" id="terms" style="width: auto;" required>
+                    <label for="terms" style="margin: 0; font-weight: 400; font-size: 0.9rem;">Saya setuju dengan Syarat & Ketentuan</label>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">Daftar Sekarang</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 2rem; font-size: 0.9rem; color: var(--text-gray);">
+                Sudah punya akun? <a href="index.html" style="color: var(--primary-purple); font-weight: 600;">Login di sini</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
