@@ -2,6 +2,8 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const NodeCache = require('node-cache');
+const mysql = require('mysql2/promise'); // Perlu: npm install mysql2
+const path = require('path');
 require('dotenv').config(); // Muat variabel dari file .env
 
 const app = express();
@@ -13,6 +15,65 @@ const myCache = new NodeCache({ stdTTL: 60 });
 // Middleware
 app.use(cors()); // Mengizinkan frontend mengakses API ini
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend'))); // Menyajikan file frontend di localhost:3000
+
+// --- KONEKSI DATABASE (MYSQL) ---
+let pool; // Gunakan let agar bisa diinisialisasi setelah database dibuat
+
+// Test koneksi dan buat tabel jika belum ada
+(async () => {
+    try {
+        // 1. Buat koneksi sementara untuk membuat Database jika belum ada
+        const dbConfig = {
+            host: process.env.DB_HOST || 'localhost',
+            user: process.env.DB_USER || 'root',
+            password: process.env.DB_PASSWORD || '',
+        };
+        const dbName = process.env.DB_NAME || 'bakulgaming';
+
+        const tempConnection = await mysql.createConnection(dbConfig);
+        await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+        await tempConnection.end();
+
+        // 2. Inisialisasi Pool dengan database yang benar
+        pool = mysql.createPool({ ...dbConfig, database: dbName, waitForConnections: true, connectionLimit: 10, queueLimit: 0 });
+
+        // 3. Buat Tabel
+        const connection = await pool.getConnection();
+        console.log('✅ Berhasil terhubung ke MySQL');
+        
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS transactions (
+                _id INT AUTO_INCREMENT PRIMARY KEY,
+                id VARCHAR(50) NOT NULL,
+                user_name VARCHAR(255),
+                user_email VARCHAR(255),
+                game VARCHAR(255),
+                item VARCHAR(255),
+                price DECIMAL(15, 0),
+                status VARCHAR(50) DEFAULT 'Pending',
+                date VARCHAR(50),
+                username_game VARCHAR(255)
+            )
+        `);
+
+        // Tambahkan kolom created_at jika belum ada (untuk fitur timer 10 menit)
+        try {
+            await connection.query("ALTER TABLE transactions ADD COLUMN created_at BIGINT");
+        } catch (e) {
+            // Abaikan error jika kolom sudah ada
+        }
+
+        // Ubah tipe data price agar tidak ada desimal (untuk database yg sudah terlanjur dibuat)
+        try {
+            await connection.query("ALTER TABLE transactions MODIFY COLUMN price DECIMAL(15, 0)");
+        } catch (e) {
+        }
+        connection.release();
+    } catch (err) {
+        console.error('❌ Gagal koneksi MySQL:', err);
+    }
+})();
 
 // Endpoint Verifikasi Roblox
 app.post('/api/roblox/verify', async (req, res) => {
@@ -111,6 +172,11 @@ app.post('/api/roblox/verify-gamepass', async (req, res) => {
     const { userId, price } = req.body;
     if (!userId || !price) return res.status(400).json({ success: false });
 
+    // --- BYPASS MODE (UNTUK TESTING) ---
+    // Langsung return sukses agar bisa tes masuk database tanpa bikin gamepass asli
+    console.log(`[TESTING] Bypass Gamepass Check untuk UserID: ${userId}, Harga: ${price}`);
+    return res.json({ success: true });
+
     try {
         // 1. Ambil game user
         const response = await axios.get(`https://games.roblox.com/v2/users/${userId}/games?accessFilter=Public&sortOrder=Asc&limit=10`);
@@ -145,13 +211,108 @@ app.post('/api/roblox/verify-gamepass', async (req, res) => {
     }
 });
 
+// --- API TRANSAKSI (PENGGANTI LOCALSTORAGE) ---
+
+// 1. Simpan Transaksi Baru
+app.post('/api/transaction/create', async (req, res) => {
+    try {
+        if (!pool) {
+            throw new Error('Koneksi database belum siap. Pastikan MySQL berjalan dan refresh server.');
+        }
+        const { user_name, user_email, game, item, price, status, date, username_game } = req.body;
+        
+        // 1. GENERATE ID URUT (TRX-0001)
+        const [lastRow] = await pool.query('SELECT id FROM transactions ORDER BY _id DESC LIMIT 1');
+        let newId = 'TRX-0001';
+        if (lastRow.length > 0 && lastRow[0].id) {
+            const lastId = lastRow[0].id; // Contoh: TRX-0005
+            const parts = lastId.split('-');
+            if (parts.length === 2) {
+                const num = parseInt(parts[1]);
+                // Cek: Jika angka < 1.000.000 berarti itu urutan (bukan timestamp/random)
+                // Jika angka besar (timestamp), kita reset ke TRX-0001
+                if (!isNaN(num) && num < 1000000) newId = `TRX-${String(num + 1).padStart(4, '0')}`;
+            }
+        }
+
+        const sql = `INSERT INTO transactions (id, user_name, user_email, game, item, price, status, date, username_game, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        // Pastikan tidak ada nilai undefined (ganti dengan null agar MySQL mau menerima)
+        const values = [
+            newId, 
+            user_name || null, 
+            user_email || null, 
+            game || null, 
+            item || null, 
+            price || null, 
+            status || 'Pending', 
+            date || null, 
+            username_game || null,
+            Date.now() // Simpan waktu pembuatan dalam milidetik
+        ];
+        
+        await pool.execute(sql, values);
+        res.json({ success: true, message: 'Transaksi berhasil disimpan', transactionId: newId });
+    } catch (error) {
+        console.error('❌ Error Transaction:', error);
+        res.status(500).json({ success: false, message: 'Gagal menyimpan transaksi: ' + error.message });
+    }
+});
+
+// 2. Ambil Semua Transaksi (Untuk Admin)
+app.get('/api/transactions', async (req, res) => {
+    try {
+        if (!pool) {
+            throw new Error('Koneksi database belum siap.');
+        }
+
+        // LOGIKA AUTO GAGAL (Jika Pending > 5 Menit)
+        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+        await pool.query("UPDATE transactions SET status = 'Gagal' WHERE status = 'Pending' AND created_at < ?", [fiveMinutesAgo]);
+        
+        const { email, id } = req.query;
+        let sql = 'SELECT * FROM transactions ORDER BY _id DESC';
+        let params = [];
+
+        if (id) {
+            // Ambil spesifik 1 transaksi (untuk halaman pembayaran)
+            sql = 'SELECT * FROM transactions WHERE id = ?';
+            params = [id];
+        } else if (email) {
+            // Ambil history user
+            sql = 'SELECT * FROM transactions WHERE user_email = ? ORDER BY _id DESC';
+            params = [email];
+        }
+
+        const [rows] = await pool.execute(sql, params);
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json([]);
+    }
+});
+
+// 3. Update Status Transaksi (Untuk Admin)
+app.post('/api/transaction/update-status', async (req, res) => {
+    const { id, status } = req.body;
+    try {
+        if (!pool) {
+            throw new Error('Koneksi database belum siap.');
+        }
+        await pool.execute('UPDATE transactions SET status = ? WHERE id = ?', [status, id]);
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false });
+    }
+});
+
 // Endpoint Admin Login
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
     
     // Cek username (case-insensitive) dan password (trim spasi)
-    const adminUser = process.env.ADMIN_USERNAME;
-    const adminPass = process.env.ADMIN_PASSWORD;
+    const adminUser = process.env.ADMIN_USERNAME || 'admin';
+    const adminPass = process.env.ADMIN_PASSWORD || 'admin123';
 
     if (username && username.trim().toLowerCase() === adminUser.toLowerCase() && password && password.trim() === adminPass) {
         return res.json({ success: true, message: 'Login successful', token: 'admin-authorized-token' });

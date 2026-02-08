@@ -389,8 +389,14 @@
             }
         }
 
-        function loadUserTransactions(user) {
-            const transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
+        async function loadUserTransactions(user) {
+            let transactions = [];
+            try {
+                const response = await fetch(`http://localhost:3000/api/transactions?email=${encodeURIComponent(user.email)}`);
+                transactions = await response.json();
+            } catch (error) {
+                console.error('Gagal mengambil data transaksi:', error);
+            }
             
             // Ambil nilai filter
             const gameFilter = document.getElementById('filter-game').value;
@@ -432,7 +438,7 @@
 
                 userTrx.forEach(trx => {
                     if (trx.status === 'Sukses') {
-                        totalSpent += trx.price;
+                        totalSpent += parseInt(trx.price);
                         successCount++;
                     } else if (trx.status === 'Pending') {
                         pendingCount++;
@@ -459,7 +465,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="price-cell">Rp ${trx.price.toLocaleString('id-ID')}</td>
+                            <td class="price-cell">Rp ${parseInt(trx.price).toLocaleString('id-ID')}</td>
                             <td><span class="status-badge ${statusClass}">${trx.status}</span></td>
                         </tr>
                     `;

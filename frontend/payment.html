@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran | BakulGaming</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .timer-box {
+            background: #FFF5F5;
+            color: #E53935;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #FFCDD2;
+        }
+        .trx-details {
+            text-align: left;
+            margin-bottom: 2rem;
+            background: #F9FAFF;
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        .detail-row span:first-child { color: #8F9BB3; }
+        .detail-row span:last-child { font-weight: 600; color: #0E185F; }
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: #eee;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #888;
+            border: 2px dashed #ccc;
+        }
+        .status-failed-msg {
+            color: red;
+            font-weight: bold;
+            display: none;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body style="background-color: #F4F7FE;">
+
+    <div class="payment-container">
+        <h2 style="margin-bottom: 0.5rem;">Selesaikan Pembayaran</h2>
+        <p style="color: #888; margin-bottom: 2rem;">Scan QRIS di bawah ini sebelum waktu habis</p>
+
+        <div id="timer-display" class="timer-box">05:00</div>
+        <div id="failed-message" class="status-failed-msg">Waktu Pembayaran Habis! Transaksi Gagal.</div>
+
+        <div class="qr-placeholder">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" style="width: 100%; height: 100%; opacity: 0.5;">
+        </div>
+
+        <div class="trx-details">
+            <div class="detail-row">
+                <span>ID Transaksi</span>
+                <span id="p-id">Loading...</span>
+            </div>
+            <div class="detail-row">
+                <span>Item</span>
+                <span id="p-item">-</span>
+            </div>
+            <div class="detail-row">
+                <span>Username Roblox</span>
+                <span id="p-username">-</span>
+            </div>
+            <div class="detail-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <span>Total Bayar</span>
+                <span id="p-price" style="color: var(--primary-purple); font-size: 1.2rem;">Rp 0</span>
+            </div>
+        </div>
+
+        <button id="btn-simulate-success" onclick="simulateSuccess()" class="btn-primary" style="width: 100%; background: #10B981; border: none;">Simulasi Bayar Sukses</button>
+        <a href="user-dashboard.html" style="display: block; margin-top: 1rem; color: #888; text-decoration: none; font-size: 0.9rem;">Kembali ke Dashboard</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const trxId = urlParams.get('id');
+        let createdAt = Date.now();
+
+        async function loadTransaction() {
+            if (!trxId) return;
+            try {
+                const res = await fetch(`http://localhost:3000/api/transactions?id=${trxId}`);
+                const data = await res.json();
+                
+                if (data.length > 0) {
+                    const trx = data[0];
+                    document.getElementById('p-id').textContent = trx.id;
+                    document.getElementById('p-item').textContent = trx.item;
+                    document.getElementById('p-username').textContent = trx.username_game;
+                    document.getElementById('p-price').textContent = 'Rp ' + parseInt(trx.price).toLocaleString('id-ID');
+                    
+                    createdAt = trx.created_at || Date.now(); // Ambil waktu server
+                    
+                    // Cek status
+                    if (trx.status === 'Sukses') {
+                        alert('Pembayaran Berhasil!');
+                        window.location.href = 'user-dashboard.html';
+                    } else if (trx.status === 'Gagal') {
+                        showFailed();
+                    } else {
+                        startTimer();
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function startTimer() {
+            const timerDisplay = document.getElementById('timer-display');
+            
+            const interval = setInterval(() => {
+                const now = Date.now();
+                const deadline = createdAt + (5 * 60 * 1000); // 5 menit dari created_at
+                const diff = deadline - now;
+
+                if (diff <= 0) {
+                    clearInterval(interval);
+                    timerDisplay.textContent = "00:00";
+                    showFailed();
+                    return;
+                }
+
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function showFailed() {
+            document.getElementById('timer-display').style.display = 'none';
+            document.getElementById('failed-message').style.display = 'block';
+            document.getElementById('btn-simulate-success').style.display = 'none';
+            document.querySelector('.qr-placeholder').style.opacity = '0.2';
+        }
+
+        async function simulateSuccess() {
+            if (!trxId) return;
+            try {
+                await fetch('http://localhost:3000/api/transaction/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: trxId, status: 'Sukses' })
+                });
+                alert('Pembayaran Diterima! Transaksi Sukses.');
+                window.location.href = 'user-dashboard.html';
+            } catch (e) {
+                alert('Gagal update status');
+            }
+        }
+
+        loadTransaction();
+    </script>
+</body>
+</html>

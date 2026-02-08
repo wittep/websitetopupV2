@@ -91,7 +91,10 @@
         <!-- View: Transaksi -->
         <div id="view-transaksi" class="admin-view" style="display: none;">
             <section class="data-table-container">
-                <h3>Riwayat Transaksi Lengkap</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0;">Riwayat Transaksi Lengkap</h3>
+                    <button onclick="loadAdminData()" style="background: var(--primary-purple); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">🔄 Refresh Data</button>
+                </div>
                 <p style="color: var(--text-gray); margin-top: -10px; margin-bottom: 1.5rem;">Semua data transaksi yang pernah tercatat.</p>
                 <!-- Filter Controls -->
                 <div class="trx-filters-row" style="margin-bottom: 1.5rem; max-width: 600px;">
@@ -168,14 +171,14 @@
         <div id="view-pengaturan" class="admin-view" style="display: none;">
             <section class="data-table-container">
                 <h3>Pengaturan</h3>
-                <!-- Area Tester: Reset Data -->
+                <!-- Area Reset Data -->
                 <div style="margin-top: 1rem;">
-                    <h4 style="color: #FF4D4D; margin-bottom: 1rem;">Zona Bahaya (Tester)</h4>
+                    <h4 style="color: #FF4D4D; margin-bottom: 1rem;">Zona Bahaya</h4>
                     <button onclick="resetAllData()" style="background: #FF4D4D; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                         🗑️ Hapus Semua Data Transaksi
                     </button>
                     <p style="color: var(--text-gray); font-size: 0.85rem; margin-top: 0.5rem;">
-                        Gunakan tombol ini untuk mereset database lokal saat testing selesai.
+                        Gunakan tombol ini untuk mereset database lokal.
                     </p>
                 </div>
             </section>
@@ -207,18 +210,19 @@
             }
         }
 
-        function changeStatus(id) {
-            let transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
-            const trxIndex = transactions.findIndex(t => t.id === id);
+        async function changeStatus(id, currentStatus) {
+            // Rotasi Status: Pending -> Sukses -> Gagal -> Pending
+            let newStatus = currentStatus === 'Pending' ? 'Sukses' : (currentStatus === 'Sukses' ? 'Gagal' : 'Pending');
             
-            if (trxIndex !== -1) {
-                const currentStatus = transactions[trxIndex].status;
-                // Rotasi Status: Pending -> Sukses -> Gagal -> Pending
-                let newStatus = currentStatus === 'Pending' ? 'Sukses' : (currentStatus === 'Sukses' ? 'Gagal' : 'Pending');
-                
-                transactions[trxIndex].status = newStatus;
-                localStorage.setItem('all_transactions', JSON.stringify(transactions));
-                loadAdminData(); // Refresh tabel untuk melihat perubahan warna
+            try {
+                await fetch('http://localhost:3000/api/transaction/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id, status: newStatus })
+                });
+                loadAdminData(); // Refresh tabel
+            } catch (e) {
+                alert('Gagal update status');
             }
         }
 
@@ -260,22 +264,12 @@
             loadAdminData();
 
             // --- AUTO REFRESH (REAL-TIME) ---
-            // Mendeteksi jika ada transaksi baru dari tab User
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'all_transactions') {
-                    loadAdminData();
-                }
-            });
+            // Refresh otomatis setiap 10 detik agar data dari database selalu update
+            setInterval(loadAdminData, 10000);
 
             // --- Fungsikan Filter ---
             document.getElementById('admin-filter-game').addEventListener('change', loadAdminData);
             document.getElementById('admin-filter-status').addEventListener('change', loadAdminData);
-
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'all_transactions') {
-                    loadAdminData();
-                }
-            });
         });
 
         function createTransactionRow(trx) {
@@ -286,20 +280,26 @@
             return `
                 <tr>
                     <td>${trx.id}</td>
-                    <td>${trx.user_name}<br><small style="color:#888">${trx.user_email}</small></td>
+                    <td>${trx.user_name}<br><small style="color:var(--primary-purple); font-weight:600;">${trx.username_game || '-'}</small></td>
                     <td>${trx.game}</td>
                     <td>${trx.item}</td>
-                    <td>Rp ${trx.price.toLocaleString('id-ID')}</td>
-                    <td><span class="status-badge ${statusClass}" onclick="changeStatus('${trx.id}')" style="cursor:pointer; user-select:none;" title="Klik untuk ubah status">${trx.status}</span></td>
+                    <td>Rp ${parseInt(trx.price).toLocaleString('id-ID')}</td>
+                    <td><span class="status-badge ${statusClass}" onclick="changeStatus('${trx.id}', '${trx.status}')" style="cursor:pointer; user-select:none;" title="Klik untuk ubah status">${trx.status}</span></td>
                     <td>${trx.date}</td>
                 </tr>
             `;
         }
 
-        function loadAdminData() {
-            let transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
+        async function loadAdminData() {
             const recentTbody = document.querySelector('#recent-transactions-table tbody');
             const fullTbody = document.querySelector('#full-transactions-table tbody');
+            
+            // Ambil data dari Server Database
+            let transactions = [];
+            try {
+                const res = await fetch('http://localhost:3000/api/transactions');
+                transactions = await res.json();
+            } catch (e) { console.log('Gagal load data'); }
             
             // Elemen Statistik
             const totalRevenueEl = document.querySelectorAll('.stat-box h3')[0];
@@ -311,7 +311,7 @@
             // Hitung statistik dari semua transaksi (sebelum difilter)
             transactions.forEach(trx => {
                 if (trx.status === 'Sukses') {
-                    totalRevenue += trx.price;
+                    totalRevenue += parseInt(trx.price);
                     successCount++;
                 }
             });

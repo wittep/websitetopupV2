@@ -363,51 +363,38 @@
                 isUpdating = false;
             });
 
-            // --- FUNGSI SIMULASI TRANSAKSI (Untuk Testing) ---
-            function simulateTransaction(robuxAmount, totalPrice) {
+            // --- FUNGSI PROSES TRANSAKSI ---
+            async function processTransaction(robuxAmount, totalPrice) {
                 const activeUserStr = localStorage.getItem('activeUser');
-                // Fallback user jika testing tanpa login
                 const user = activeUserStr ? JSON.parse(activeUserStr) : { name: 'Guest', email: 'guest@example.com' };
                 const gameUsername = document.getElementById('roblox-username').value;
 
-                // Prompt pilihan skenario
-                const scenario = prompt(
-                    "--- SIMULASI PEMBAYARAN (TESTING) ---\n" +
-                    "Pilih hasil transaksi yang diinginkan:\n\n" +
-                    "1. SUKSES (Sudah Bayar & Masuk)\n" +
-                    "2. PENDING (Sudah Bayar, Belum Masuk)\n" +
-                    "3. GAGAL (Belum Bayar / Cancel)\n\n" +
-                    "Ketik angka 1, 2, atau 3:"
-                );
-
-                if (!scenario) return; // Batal
-
-                let status = '';
-                if (scenario === '1') status = 'Sukses';
-                else if (scenario === '2') status = 'Pending';
-                else if (scenario === '3') status = 'Gagal';
-                else { alert('Pilihan tidak valid'); return; }
-
                 // Buat Data Transaksi
                 const newTrx = {
-                    id: generateNextTransactionId(), // Panggil fungsi global
                     user_name: user.name,
                     user_email: user.email,
                     game: 'Roblox',
                     item: robuxAmount + ' Robux',
                     price: parseInt(totalPrice),
-                    status: status,
+                    status: 'Pending',
                     date: new Date().toLocaleString('id-ID'),
                     username_game: gameUsername
                 };
 
-                // Simpan ke LocalStorage
-                const transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
-                transactions.unshift(newTrx);
-                localStorage.setItem('all_transactions', JSON.stringify(transactions));
-
-                alert(`Simulasi Selesai! Status: ${status}`);
-                window.location.href = 'user-dashboard.html';
+                try {
+                    // Kirim ke Backend Database
+                    const response = await fetch('http://localhost:3000/api/transaction/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newTrx)
+                    });
+                    const data = await response.json();
+                    
+                    // Redirect ke Halaman Pembayaran Baru
+                    window.location.href = 'payment.html?id=' + data.transactionId;
+                } catch (error) {
+                    alert('Gagal membuat pesanan. Cek koneksi server.');
+                }
             }
 
             const packageCards = document.querySelectorAll('.roblox-package-card');
@@ -558,10 +545,40 @@
 
             // Tombol Sudah Mengatur Gamepass (Verifikasi)
             document.getElementById('btn-check-gp').addEventListener('click', async () => {
-                // BYPASS VERIFIKASI UNTUK TESTING
-                // Langsung tutup modal dan jalankan simulasi tanpa cek ke server
-                gamepassModal.classList.remove('active');
-                simulateTransaction(robuxInput.value, priceInput.value);
+                const gpBtn = document.getElementById('btn-check-gp');
+                const originalText = gpBtn.textContent;
+                gpBtn.textContent = 'Memeriksa...';
+                gpBtn.disabled = true;
+                
+                const gpError = document.getElementById('gp-error');
+                gpError.style.display = 'none';
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/roblox/verify-gamepass', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            userId: currentUserId,
+                            price: robuxInput.value 
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        gamepassModal.classList.remove('active');
+                        processTransaction(robuxInput.value, priceInput.value);
+                    } else {
+                        gpError.textContent = data.message || 'Gamepass tidak ditemukan. Pastikan harga sesuai!';
+                        gpError.style.display = 'block';
+                    }
+                } catch (error) {
+                    gpError.textContent = 'Gagal terhubung ke server.';
+                    gpError.style.display = 'block';
+                } finally {
+                    gpBtn.textContent = originalText;
+                    gpBtn.disabled = false;
+                }
             });
 
             // Fungsi Tutup Modal Global

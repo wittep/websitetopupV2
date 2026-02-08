@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Logika Register Tester (Simulasi) ---
+    // --- Logika Register User ---
     const registerForm = document.querySelector('form[action="#"]'); // Selector untuk form di register.html
     // Cek apakah kita berada di halaman register dengan mengecek keberadaan elemen input khusus register
     const regNameInput = document.getElementById('reg-name');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Logika Login Global (Modal & Page) ---
+    // --- Logika Login Global ---
     const loginForm = document.getElementById('mainLoginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = 'Memproses...';
             btn.disabled = true;
 
-            // --- Cek Login User Tester (LocalStorage) ---
+            // --- Cek Login User (LocalStorage) ---
             // Cek apakah ada data user tersimpan di browser
             const storedUser = localStorage.getItem('user_' + username);
             if (storedUser) {
@@ -191,19 +191,24 @@ window.onclick = function(event) {
 }
 
 function generateNextTransactionId() {
-    const transactions = JSON.parse(localStorage.getItem('all_transactions') || '[]');
-    
-    let nextIdNumber = 1;
-    if (transactions.length > 0) {
-        // Ambil ID terakhir (elemen pertama karena unshift)
-        const lastId = transactions[0].id; // Format: TRX-XXXX
-        if (lastId && lastId.startsWith('TRX-')) {
-            const parts = lastId.split('-');
-            if (parts.length === 2) {
-                const num = parseInt(parts[1]);
-                if (!isNaN(num)) nextIdNumber = num + 1;
-            }
-        }
-    }
-    return 'TRX-' + String(nextIdNumber).padStart(4, '0');
+    // Cara Cepat & Unik: Gunakan Timestamp + Random (Tidak perlu cek database/localStorage)
+    // Contoh hasil: TRX-839201456
+    const timestamp = Date.now().toString().slice(-6); 
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `TRX-${timestamp}${random}`;
 }
+
+// --- FUNGSI BARU: Panggil ini saat tombol "Bayar" diklik ---
+window.buatTransaksiBaru = async function(data) {
+    try {
+        const response = await fetch('http://localhost:3000/api/transaction/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        return await response.json(); // Mengembalikan { success: true/false }
+    } catch (error) {
+        console.error('Gagal kirim transaksi:', error);
+        return { success: false, message: 'Gagal terhubung ke server' };
+    }
+};
