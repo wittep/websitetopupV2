@@ -26,7 +26,7 @@
                 <p style="color: var(--text-gray);">Bergabunglah dan nikmati kemudahan top-up!</p>
             </div>
 
-            <form action="#">
+            <form id="registerFormReal">
                 <div class="form-group">
                     <label for="reg-name">Nama Lengkap</label>
                     <input type="text" id="reg-name" required placeholder="Contoh: Budi Gaming">
@@ -58,6 +58,101 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- OTP Verification Modal -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal-content login-modal-content" style="text-align: center;">
+            <h3>Verifikasi Email</h3>
+            <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1rem;">
+                Masukkan kode 6 digit yang dikirim ke <br><b id="otp-email-target"></b>
+            </p>
+            <input type="text" id="otp-input-real" placeholder="000000" maxlength="6" 
+                   style="width: 100%; padding: 12px; text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem; margin-bottom: 1.5rem; border: 1px solid #ddd; border-radius: 8px;">
+            <button id="btn-verify-otp" class="btn-primary" style="width: 100%;">Verifikasi & Daftar</button>
+            <button onclick="document.getElementById('otpModal').classList.remove('active')" class="btn-secondary" style="width: 100%; margin-top: 10px; background: transparent; color: #888;">Batal</button>
+        </div>
+    </div>
+
+    <!-- Script Khusus Register -->
+    <script>
+        let tempEmail = '';
+
+        document.getElementById('registerFormReal').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if (password !== confirm) {
+                alert('Konfirmasi password tidak cocok!');
+                return;
+            }
+
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.textContent;
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Memproses...';
+
+            try {
+                // Step 1: Kirim Data & Request OTP
+                const res = await fetch('http://localhost:3000/api/auth/register-step1', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    // Buka Modal OTP
+                    tempEmail = email;
+                    document.getElementById('otp-email-target').textContent = email;
+                    document.getElementById('otpModal').classList.add('active');
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Gagal menghubungi server. Pastikan backend berjalan di port 3000.');
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = originalText;
+            }
+        });
+
+        // Step 2: Verifikasi OTP
+        document.getElementById('btn-verify-otp').addEventListener('click', async () => {
+            const code = document.getElementById('otp-input-real').value;
+            const btn = document.getElementById('btn-verify-otp');
+            
+            if(code.length < 6) { alert('Masukkan 6 digit kode!'); return; }
+
+            btn.disabled = true;
+            btn.textContent = 'Verifikasi...';
+
+            try {
+                const res = await fetch('http://localhost:3000/api/auth/register-step2', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: tempEmail, code })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('Registrasi Berhasil! Silakan Login.');
+                    window.location.href = 'index.html';
+                } else {
+                    alert(data.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Verifikasi & Daftar';
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Gagal menghubungi server saat verifikasi.');
+                btn.disabled = false;
+                btn.textContent = 'Verifikasi & Daftar';
+            }
+        });
+    </script>
 </body>
 </html>

@@ -99,6 +99,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // -------------------------------------------
 
+            // --- Cek Login User (Database API) ---
+            try {
+                const userResp = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: username, password })
+                });
+                const userData = await userResp.json();
+
+                if (userData.success) {
+                    localStorage.setItem('activeUser', JSON.stringify(userData.user));
+                    alert('Login Berhasil sebagai ' + userData.user.name);
+                    window.location.href = 'user-dashboard.html';
+                    return; // Stop, jangan lanjut ke admin login
+                }
+            } catch (e) { console.log('User login check failed, trying admin...', e); }
+
+            // --- Cek Login Admin ---
             try {
                 const response = await fetch('http://localhost:3000/api/admin/login', {
                     method: 'POST',

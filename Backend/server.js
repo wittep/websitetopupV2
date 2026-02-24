@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const nodemailer = require('nodemailer');
 const NodeCache = require('node-cache');
 const mysql = require('mysql2/promise'); // Perlu: npm install mysql2
 const path = require('path');
@@ -9,13 +10,27 @@ require('dotenv').config(); // Muat variabel dari file .env
 const app = express();
 const PORT = 3000;
 
-// Inisialisasi Cache: Simpan data selama 60 detik
-const myCache = new NodeCache({ stdTTL: 60 });
+// Inisialisasi Cache: Simpan data selama 300 detik (5 menit) untuk OTP
+const myCache = new NodeCache({ stdTTL: 300 });
+
+// --- KONFIGURASI EMAIL (GMAIL) ---
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER || 'email_anda@gmail.com', // Ganti dengan email gmail anda
+        pass: process.env.EMAIL_PASS || 'password_app_anda'     // Ganti dengan App Password (bukan password login biasa)
+    }
+});
 
 // Middleware
 app.use(cors()); // Mengizinkan frontend mengakses API ini
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend'))); // Menyajikan file frontend di localhost:3000
+
+// --- ROOT ENDPOINT (Untuk Cek Server) ---
+app.get('/', (req, res) => {
+    res.send('✅ Backend Server Berjalan! Database: ' + (pool ? 'Terhubung' : 'Belum Terhubung'));
+});
 
 // --- KONEKSI DATABASE (MYSQL) ---
 let pool; // Gunakan let agar bisa diinisialisasi setelah database dibuat
@@ -54,6 +69,16 @@ let pool; // Gunakan let agar bisa diinisialisasi setelah database dibuat
                 status VARCHAR(50) DEFAULT 'Pending',
                 date VARCHAR(50),
                 username_game VARCHAR(255)
+            )
+        `);
+        
+        // Buat Tabel Users
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255),
+                email VARCHAR(255) UNIQUE,
+                password VARCHAR(255)
             )
         `);
 
@@ -96,7 +121,7 @@ app.post('/api/roblox/verify', async (req, res) => {
         const userResponse = await axios.post('https://users.roblox.com/v1/usernames/users', {
             usernames: [username],
             excludeBannedUsers: true
-        });
+        }, { timeout: 5000 });
 
         const data = userResponse.data.data;
 
@@ -113,7 +138,7 @@ app.post('/api/roblox/verify', async (req, res) => {
 
         // Langkah 2: Dapatkan Avatar Headshot
         // API Roblox: https://thumbnails.roblox.com/v1/users/avatar-headshot
-        const avatarResponse = await axios.get(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`);
+        const avatarResponse = await axios.get(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`, { timeout: 5000 });
         
         const avatarData = avatarResponse.data.data;
         
@@ -211,13 +236,112 @@ app.post('/api/roblox/verify-gamepass', async (req, res) => {
     }
 });
 
+// --- API AUTHENTICATION (REGISTER & OTP) ---
+
+// 1. Kirim Kode OTP ke Email (Step 1 Registrasi)
+app.post('/api/auth/register-step1', async (req, res) => {
+    const { name, email, password } = req.body;
+    if (!email || !name || !password) return res.status(400).json({ success: false, message: 'Semua field wajib diisi' });
+
+    // Cek Koneksi DB Dulu
+    if (!pool) {
+        return res.status(500).json({ success: false, message: 'Server Database belum terhubung. Hubungi Admin.' });
+    }
+
+    // Cek apakah email sudah terdaftar di DB
+    const [existing] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (existing.length > 0) {
+        return res.status(400).json({ success: false, message: 'Email sudah terdaftar!' });
+    }
+
+    // Generate 6 digit kode
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Simpan data registrasi sementara di Cache (Key: pending_reg_EMAIL)
+    // Kita simpan object lengkap agar bisa di-insert ke DB saat verifikasi sukses
+    const tempData = { name, email, password, code };
+    myCache.set(`pending_reg_${email}`, tempData);
+
+    const mailOptions = {
+        from: '"BakulGaming Security" <no-reply@bakulgaming.com>',
+        to: email,
+        subject: 'Kode Verifikasi Pendaftaran - BakulGaming',
+        text: `Kode verifikasi Anda adalah: ${code}. Kode ini berlaku selama 5 menit.`,
+        html: `<h3>Halo ${name}!</h3><p>Kode verifikasi pendaftaran Anda adalah: <b style="font-size: 24px; color: #6C5DD3;">${code}</b></p><p>Jangan berikan kode ini kepada siapapun.</p>`
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.json({ success: true, message: 'Kode verifikasi telah dikirim ke email Anda.' });
+    } catch (error) {
+        console.error('Gagal kirim email:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengirim email. Pastikan alamat email benar.' });
+    }
+});
+
+// 2. Verifikasi OTP & Simpan User (Step 2 Registrasi)
+app.post('/api/auth/register-step2', async (req, res) => {
+    const { email, code } = req.body;
+
+    // Cek Koneksi DB
+    if (!pool) {
+        return res.status(500).json({ success: false, message: 'Server Database belum terhubung.' });
+    }
+
+    // Ambil data pending dari cache
+    const pendingData = myCache.get(`pending_reg_${email}`);
+
+    if (!pendingData) {
+        return res.status(400).json({ success: false, message: 'Sesi pendaftaran habis atau tidak ditemukan. Silakan daftar ulang.' });
+    }
+
+    if (pendingData.code !== code) {
+        return res.status(400).json({ success: false, message: 'Kode verifikasi salah.' });
+    }
+
+    try {
+        // Simpan ke Database
+        await pool.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [pendingData.name, pendingData.email, pendingData.password]);
+        myCache.del(`pending_reg_${email}`); // Hapus data pending setelah sukses
+        res.json({ success: true, message: 'Registrasi Berhasil! Silakan Login.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Gagal menyimpan user ke database.' });
+    }
+});
+
+// 3. Login User (Database)
+app.post('/api/auth/login', async (req, res) => {
+    const { email, password } = req.body;
+    if (!pool) return res.status(500).json({ success: false, message: 'Database error' });
+
+    try {
+        // Cek email ATAU nama (karena form login bilang "Email / Username")
+        const [rows] = await pool.query('SELECT * FROM users WHERE (email = ? OR name = ?) AND password = ?', [email, email, password]);
+        
+        if (rows.length > 0) {
+            const user = rows[0];
+            // Kembalikan data user (tanpa password)
+            return res.json({ 
+                success: true, 
+                user: { id: user.id, name: user.name, email: user.email }
+            });
+        } else {
+            return res.status(401).json({ success: false, message: 'Email atau Password salah' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+});
+
 // --- API TRANSAKSI (PENGGANTI LOCALSTORAGE) ---
 
 // 1. Simpan Transaksi Baru
 app.post('/api/transaction/create', async (req, res) => {
     try {
         if (!pool) {
-            throw new Error('Koneksi database belum siap. Pastikan MySQL berjalan dan refresh server.');
+            return res.status(500).json({ success: false, message: 'Koneksi database belum siap.' });
         }
         const { user_name, user_email, game, item, price, status, date, username_game } = req.body;
         
